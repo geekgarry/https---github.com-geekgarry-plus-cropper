@@ -12,27 +12,42 @@ npm install plus-cropper
 ### How to use it in the project!
 
 ```
-import ImageCropper from 'plus-cropper';
+import PlusCropper from 'plus-cropper';
 
-const cropper = new ImageCropper({
-    imageSrc: 'your image url', // 替换为你的图片地址
-    auautoShow: false,//是否在初始化后显示裁剪，不写时默认为true，为false时，需要调用cropper.show();
+//第一种使用：使用show方法已经包含了初始化函数的作用
+// 显示裁剪框，传入配置选项
+PlusCropper.show({
+    imageSrc: tempURL
+    // ... 其他选项
 });
-cropper.onCrop((croppedImageDataURL) => {
-    console.log('裁切后的图片数据(base64):', croppedImageDataURL);
-    // 可以在这里将裁切后的图片数据上传到服务器或进行其他操作
+// 设置裁剪回调函数
+PlusCropper.onCrop((croppedImageDataURL) => {
+    console.log("Plus裁剪后的图片数据：", croppedImageDataURL);
+    // 可以在这里将裁剪后的图片数据上传到服务器或者进行其他操作
 });
-cropper.onHide(() => {
-    console.log("隐藏(取消)事件回调函数！");
+// 设置显示回调函数
+PlusCropper.onShow(() => {
+    console.log("Plus裁剪框已显示");
 });
-cropper.onShow(() => {
-    console.log("显示事件回调函数！");
+// 设置隐藏回调函数
+PlusCropper.onHide(() => {
+    console.log("Plus裁剪框已隐藏");
 });
 
-cropper.show();//当autoShow: true时才需要使用，表示在初始化时不会自动显示裁剪框
+//第二种使用：当init和第二个show一起用时
+//下面这两个方法使用时
+PlusCropper.init({
+    imageSrc: tempURL
+    // ... 其他选项
+});
+PlusCropper.show();
+...
+//***************其他以上相同方法******************
+...
 ```
 
 ### npm Docs
+
 #### Documentation for the npm registry, website, and command-line interface
 
 See [npm Docs](https://docs.npmjs.com/).
