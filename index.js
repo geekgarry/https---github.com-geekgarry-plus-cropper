@@ -108,6 +108,11 @@ const PlusCropper = {
     this.cropingImage.id = "croppingImage";
     this.cropingImage.src = this.options.imageSrc;
     this.cropingImage.alt = '待裁切图片';
+    this.transform = {
+      scale: 1,
+      rotation: 0,
+      translates: [0, 0]
+    };
     this.cropingImage.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
     // 创建裁切区域, overflow可以不需要使用，注释掉，可以完全显示五个缩放点，更精确拖拉裁切框
     this.cropArea = document.createElement('div');
@@ -390,8 +395,8 @@ const PlusCropper = {
       e.preventDefault();
       this.isImageDragging = true;
       this.startPoint = {
-        diffX: this.getTouchClientX(e),
-        diffY: this.getTouchClientY(e)
+        diffX: this.getTouchClientX(e)-this.transform.translates[0],
+        diffY: this.getTouchClientY(e)-this.transform.translates[1]
       };
     });
     //拖拽图片更新位置拖拽图片事件
@@ -404,8 +409,8 @@ const PlusCropper = {
     */
     const handleDragImageMove = (e) => {
       e.stopPropagation();
-      var mouseX = Math.max(this.getTouchClientX(e), this.getTouchClientX(e) - this.cropingImage.offsetLeft);
-      var mouseY = Math.max(this.getTouchClientY(e), this.getTouchClientY(e) - this.cropingImage.offsetTop);
+      var mouseX = Math.max(0, this.getTouchClientX(e));
+      var mouseY = Math.max(0, this.getTouchClientY(e));
       if (!this.isImageDragging) return;
       var ptX = mouseX - this.startPoint.diffX;
       var ptY = mouseY - this.startPoint.diffY;
@@ -576,7 +581,7 @@ const PlusCropper = {
     // 重新定位图片到canvas上
     var x = -this.cropingImage.width / 2;
     var y = -this.cropingImage.height / 2;
-    ctx.drawImage(this.cropingImage, sourceX - sourceWidth / 2, sourceY - sourceHeight / 2, sourceWidth, sourceHeight, 0, 0, this.cropAreaWidth, this.cropAreaHeight);
+    ctx.drawImage(this.cropingImage, (sourceX - sourceWidth / 2)-this.transform.translates[0], (sourceY - sourceHeight / 2)-this.transform.translates[1], sourceWidth, sourceHeight, 0, 0, this.cropAreaWidth, this.cropAreaHeight);
     // 恢复Canvas状态
     ctx.restore();
 
@@ -636,6 +641,11 @@ const PlusCropper = {
     }
     ctx.translate(canvas.width / 2, canvas.height / 2); // 将canvas原点移动到中心
     ctx.rotate(angleDegress * Math.PI / 180); // 旋转canvas
+    this.transform = {
+      scale: 1,
+      rotation: 0,
+      translates: [0, 0]
+    };
     this.cropingImage.style.transform = 'rotate(0deg)';
     ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2); // 绘制图片
     this.cropingImage.src = canvas.toDataURL(); // 更新图片src

@@ -1,10 +1,14 @@
 {
   "name": "plus-cropper",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "裁剪图片，传入图片地址，进行图片裁切，最后成功输出一个图片的base64数据,另外还可以旋转图片，添加滚轮缩放裁剪框，以及对图片旋转和缩放以及拖动，添加移动端触摸滑动，旋转图片和缩放图片等操作",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geekgarry/plus-cropper.git"
   },
   "keywords": [
     "plus-cropper",
@@ -12,6 +16,10 @@
     "crop",
     "vue"
   ],
-  "author": "geekplus",
-  "license": "MIT"
+  "author": "geekgarry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geekgarry/plus-cropper/issues"
+  },
+  "homepage": "https://github.com/geekgarry/plus-cropper#readme"
 }
