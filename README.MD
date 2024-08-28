@@ -14,11 +14,13 @@ npm install plus-cropper
 ```
 import PlusCropper from 'plus-cropper';
 
-//第一种使用：使用show方法已经包含了初始化函数的作用
 // 显示裁剪框，传入配置选项
 PlusCropper.show({
     imageSrc: tempURL
-    // ... 其他选项
+    // ... 其他选项（可选）
+    closableBtn: true,//默认通过右上角按钮关闭裁剪的界面
+    cropAreaWidth: 150,//裁剪框初始长宽
+    cropAreaHeight: 100,//裁剪框初始长宽
 });
 // 设置裁剪回调函数
 PlusCropper.onCrop((croppedImageDataURL) => {
@@ -33,16 +35,6 @@ PlusCropper.onShow(() => {
 PlusCropper.onHide(() => {
     console.log("Plus裁剪框已隐藏");
 });
-
-//第二种使用：当init和第二个show一起用时
-//下面这两个方法使用时
-PlusCropper.init({
-    imageSrc: tempURL
-    // ... 其他选项
-});
-PlusCropper.show();
-...
-//***************其他以上相同方法******************
 ...
 ```
 

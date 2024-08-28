@@ -6,9 +6,10 @@ const PlusCropper = {
   // 配置选项
   options: {
     container: document.body,
-    imageSrc: "",
-    cropAreaWidth: 150,
-    cropAreaHeight: 100,
+    imageSrc: "",//传入的图片地址
+    closableBtn: true,//默认通过右上角按钮关闭裁剪的界面
+    cropAreaWidth: 150,//裁剪框初始长宽
+    cropAreaHeight: 100,//裁剪框初始长宽
   },
 
   //设置全局的监听回调函数
@@ -19,8 +20,8 @@ const PlusCropper = {
   isDragging: false, // 是否正在拖动裁剪框
   isResizing: false, // 是否正在调整裁剪框大小
   resizeDirection: '',
-  cropAreaX: 50,
-  cropAreaY: 50,
+  cropAreaX: 0,
+  cropAreaY: 0,
   startX: 0,
   startY: 0,
   // 图片缩放程度，旋转角度,位移位置坐标
@@ -34,21 +35,6 @@ const PlusCropper = {
     diffX: 0,
     diffY: 0
   },
-  
-  // 初始化函数，用于创建和配置裁剪框,
-  // 如果要使用intit，需要把前面的options配置选项已经在下面存在的可以去掉，其实不去也就被init调用时重新覆盖了
-  // 下面的show删去或注释，再把最下面的第二个显示裁剪框的show方法重新打开
-  // init: function (options = {}) {
-  //   this.options = Object.assign({
-  //     container: document.body,
-  //     imageSrc: '',
-  //     cropAreaWidth: 150,
-  //     cropAreaHeight: 100,
-  //   }, options);
-
-  //   this.createElements();
-  //   this.bindEvents();
-  // },
 
   // 省去初始化步骤直接显示裁剪框，使用了这个show直接包含了初始化以及显示，就不需要初始化init函数和另外一个show
   show: function (options = {}) {
@@ -60,6 +46,8 @@ const PlusCropper = {
       this.overlay.remove();
     }
 
+    this.cropAreaX = 0;
+    this.cropAreaY = 0;
     this.createElements();
     this.bindEvents();
     this.overlay.style.display = "flex";
@@ -114,6 +102,20 @@ const PlusCropper = {
       translates: [0, 0]
     };
     this.cropingImage.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+    // 根据closableBtn是否创建关闭按钮
+    if(this.options.closableBtn){
+      this.closeBtn = document.createElement("button");
+      if (this.checkSVGSupport()) {
+        this.closeBtn.innerHTML = '<svg t="1724780707138" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5255" width="20" height="20"><path d="M818.1 872.1c-15.4 0-30.7-5.9-42.4-17.6l-613-612.9c-23.4-23.4-23.4-61.4 0-84.9 23.4-23.4 61.4-23.4 84.9 0l612.9 612.9c23.4 23.4 23.4 61.4 0 84.9a59.914 59.914 0 0 1-42.4 17.6z" fill="currentColor" p-id="5256"></path><path d="M205.1 872.1c-15.4 0-30.7-5.9-42.4-17.6-23.4-23.4-23.4-61.4 0-84.9l612.9-612.9c23.4-23.4 61.4-23.4 84.9 0 23.4 23.4 23.4 61.4 0 84.9L247.6 854.5c-11.7 11.7-27.1 17.6-42.5 17.6z" fill="currentColor" p-id="5257"></path><path d="M818.1 872.1c-15.4 0-30.7-5.9-42.4-17.6l-613-612.9c-23.4-23.4-23.4-61.4 0-84.9 23.4-23.4 61.4-23.4 84.9 0l612.9 612.9c23.4 23.4 23.4 61.4 0 84.9a59.914 59.914 0 0 1-42.4 17.6z" fill="currentColor" p-id="5258"></path><path d="M205.1 872.1c-15.4 0-30.7-5.9-42.4-17.6-23.4-23.4-23.4-61.4 0-84.9l612.9-612.9c23.4-23.4 61.4-23.4 84.9 0 23.4 23.4 23.4 61.4 0 84.9L247.6 854.5c-11.7 11.7-27.1 17.6-42.5 17.6z" fill="currentColor" p-id="5259"></path><path d="M818.1 872.1c-15.4 0-30.7-5.9-42.4-17.6l-613-612.9c-23.4-23.4-23.4-61.4 0-84.9 23.4-23.4 61.4-23.4 84.9 0l612.9 612.9c23.4 23.4 23.4 61.4 0 84.9a59.914 59.914 0 0 1-42.4 17.6z" fill="currentColor" p-id="5260"></path><path d="M205.1 872.1c-15.4 0-30.7-5.9-42.4-17.6-23.4-23.4-23.4-61.4 0-84.9l612.9-612.9c23.4-23.4 61.4-23.4 84.9 0 23.4 23.4 23.4 61.4 0 84.9L247.6 854.5c-11.7 11.7-27.1 17.6-42.5 17.6z" fill="currentColor" p-id="5261"></path><path d="M818.1 872.1c-15.4 0-30.7-5.9-42.4-17.6l-613-612.9c-23.4-23.4-23.4-61.4 0-84.9 23.4-23.4 61.4-23.4 84.9 0l612.9 612.9c23.4 23.4 23.4 61.4 0 84.9a59.914 59.914 0 0 1-42.4 17.6z" fill="currentColor" p-id="5262"></path><path d="M205.1 872.1c-15.4 0-30.7-5.9-42.4-17.6-23.4-23.4-23.4-61.4 0-84.9l612.9-612.9c23.4-23.4 61.4-23.4 84.9 0 23.4 23.4 23.4 61.4 0 84.9L247.6 854.5c-11.7 11.7-27.1 17.6-42.5 17.6z" fill="currentColor" p-id="5263"></path></svg>';
+      } else {
+        this.closeBtn.innerText = '×';
+      }
+      this.closeBtn.style.cssText = `
+              z-index: 2026; position: absolute; right: 5px; top: 5px; background-color: rgba(64, 66, 68, 0.87); padding: 0px;
+              color: #f3f1f0; border: none; width: 30px; height: 30px; line-height: 1; display: grid; place-content: center;
+              /* margin: 5px; */`;
+      this.overlay.appendChild(this.closeBtn);
+    }
     // 创建裁切区域, overflow可以不需要使用，注释掉，可以完全显示五个缩放点，更精确拖拉裁切框
     this.cropArea = document.createElement('div');
     this.cropArea.id = 'imageCropperArea';
@@ -395,8 +397,8 @@ const PlusCropper = {
       e.preventDefault();
       this.isImageDragging = true;
       this.startPoint = {
-        diffX: this.getTouchClientX(e)-this.transform.translates[0],
-        diffY: this.getTouchClientY(e)-this.transform.translates[1]
+        diffX: this.getTouchClientX(e) - this.transform.translates[0],
+        diffY: this.getTouchClientY(e) - this.transform.translates[1]
       };
     });
     //拖拽图片更新位置拖拽图片事件
@@ -518,24 +520,22 @@ const PlusCropper = {
       }
     });
 
-    // --- 点击蒙版或裁切框以外区域关闭裁切框 ---
-    this.overlay.addEventListener('click', (e) => {
-      if (e.target === this.overlay) {// || e.target === this.cropArea
-        this.hide();
-      }
-    });
+    //根据closableBtn判断，如果为true，表示只能通过按钮关闭
+    if(this.options.closableBtn){
+      //添加关闭按钮事件
+      this.closeBtn.addEventListener('click', (e) => {
+          this.hide();
+      });
+    }else {
+      // --- 点击蒙版或裁切区域以外关闭裁切框，这里因为裁切区域显示层位于overlay之上，所以只判断点击区域是否等于overlay ---
+      this.overlay.addEventListener('click', (e) => {
+        if (e.target === this.overlay) {
+          this.hide();
+        }
+      });
+    }
   },
-  // 显示裁剪框
-  // show: function () {
-  //   this.overlay.style.display = 'flex';
-  //   // 在图片加载完成后再调用 onShowCallback
-  //   this.cropingImage.onload = () => {
-  //     //this.setImagePosition();
-  //     if (typeof this.onShowCallback === "function") {
-  //       this.onShowCallback();
-  //     }
-  //   };
-  // },
+
   // 隐藏裁剪框
   hide: function () {
     this.overlay.remove();
@@ -581,7 +581,7 @@ const PlusCropper = {
     // 重新定位图片到canvas上
     var x = -this.cropingImage.width / 2;
     var y = -this.cropingImage.height / 2;
-    ctx.drawImage(this.cropingImage, (sourceX - sourceWidth / 2)-this.transform.translates[0], (sourceY - sourceHeight / 2)-this.transform.translates[1], sourceWidth, sourceHeight, 0, 0, this.cropAreaWidth, this.cropAreaHeight);
+    ctx.drawImage(this.cropingImage, (sourceX - sourceWidth / 2) - this.transform.translates[0], (sourceY - sourceHeight / 2) - this.transform.translates[1], sourceWidth, sourceHeight, 0, 0, this.cropAreaWidth, this.cropAreaHeight);
     // 恢复Canvas状态
     ctx.restore();
 
@@ -718,6 +718,17 @@ const PlusCropper = {
     this.cropArea.style.width = this.cropAreaWidth + 'px';
     this.cropArea.style.height = this.cropAreaHeight + 'px';
   },
+  //检测是否支持使用svg
+  checkSVGSupport() {
+    // 检查SVG是否在DOM中可用
+    if (typeof SVGRect !== 'function') {
+      // 在这里执行相关的文字符号逻辑
+      return false;
+    } else {
+      // 在这里执行相关的SVG逻辑
+      return true;
+    }
+  }
 };
 // 将 PlusCropper 对象暴露给全局对象
 global_obj = (function () { return this || (0, eval)('this'); }());
